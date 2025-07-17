@@ -44,10 +44,10 @@
 
   <body>
     <div id="overlayText">SCHAU DICH UM / LOOK AROUND</div>
-    <button id="startButton">🎧 Audio starten</button>
+    <button id="startButton">🎧 Audio und Kamera starten</button>
 
     <a-scene
-      mindar-image="imageTargetSrc: ./target.mind; autoStart: true;"
+      mindar-image="imageTargetSrc: ./target.mind; autoStart: false;"
       embedded
       color-space="sRGB"
       renderer="antialias: true; alpha: true;"
@@ -72,13 +72,27 @@
     </a-scene>
 
     <script>
-      document.getElementById('startButton').addEventListener('click', () => {
-        const audio = document.querySelector('#audio');
-        audio.play().then(() => {
+      document.getElementById('startButton').addEventListener('click', async () => {
+        try {
+          // Kamera-Zugriff anfragen
+          const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+          const video = document.createElement('video');
+          video.srcObject = stream;
+          await video.play();
+
+          // Audio starten
+          const audio = document.querySelector('#audio');
+          await audio.play();
+
+          // MindAR starten
+          const scene = document.querySelector('a-scene');
+          await scene.components['mindar-image'].start();
+
+          // Startbutton ausblenden
           document.getElementById('startButton').style.display = 'none';
-        }).catch((e) => {
-          console.warn('Audio konnte nicht abgespielt werden:', e);
-        });
+        } catch (e) {
+          console.warn('Fehler beim Starten von Kamera oder Audio:', e);
+        }
       });
     </script>
   </body>
