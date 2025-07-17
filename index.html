@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Starry Night - Immersive Experience</title>
+
+    <!-- A-Frame & MindAR -->
+    <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/aframe/mindar-image-aframe.prod.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: 'Nunito', sans-serif;
+      }
+
+      #startButton {
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.85);
+        border: none;
+        padding: 0.5em 1em;
+        border-radius: 0.5em;
+        font-size: 1em;
+        cursor: pointer;
+      }
+
+      #overlayText {
+        position: fixed;
+        top: 20px;
+        width: 100%;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px black;
+        z-index: 10;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="overlayText">SCHAU DICH UM / LOOK AROUND</div>
+    <button id="startButton">🎧 Audio starten</button>
+
+    <a-scene
+      mindar-image="imageTargetSrc: ./target.mind; autoStart: true;"
+      embedded
+      color-space="sRGB"
+      renderer="antialias: true; alpha: true;"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: true"
+    >
+      <a-assets>
+        <a-asset-item id="starrynight" src="assets/models/starrynight.glb"></a-asset-item>
+        <audio id="audio" src="assets/audio/audio.wav"></audio>
+      </a-assets>
+
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-entity
+          gltf-model="#starrynight"
+          scale="0.1 0.1 0.1"
+          position="0 0 0"
+          animation-mixer
+        ></a-entity>
+      </a-entity>
+    </a-scene>
+
+    <script>
+      document.getElementById('startButton').addEventListener('click', () => {
+        const audio = document.querySelector('#audio');
+        audio.play().then(() => {
+          document.getElementById('startButton').style.display = 'none';
+        }).catch((e) => {
+          console.warn('Audio konnte nicht abgespielt werden:', e);
+        });
+      });
+    </script>
+  </body>
+</html>
