@@ -2,7 +2,6 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <title>Starry Night - Immersive Experience</title>
 
     <!-- A-Frame & MindAR -->
     <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
@@ -61,9 +60,10 @@
     <button id="startButton">🎧 Audio und Kamera starten</button>
 
     <a-scene
-      mindar-image="imageTargetSrc: ./target.mind; autoStart: false;"
+      mindar-image="imageTargetSrc: ./target.mind; autoStart: true;"
+      embedded
       color-space="sRGB"
-      renderer="antialias: true; alpha: false;"
+      renderer="antialias: true; alpha: true;"
       vr-mode-ui="enabled: false"
       device-orientation-permission-ui="enabled: true"
     >
@@ -71,13 +71,13 @@
         <a-asset-item id="starrynight" src="assets/models/starrynight.glb"></a-asset-item>
         <audio id="audio" src="assets/audio/audio.wav"></audio>
       </a-assets>
-
-      <a-camera position="0 0 0" look-controls="enabled: true"></a-camera>
-
+    
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+    
       <a-entity mindar-image-target="targetIndex: 0">
         <a-entity
           gltf-model="#starrynight"
-          scale="0.1 0.1 0.1"
+          scale="0.02 0.02 0.02"
           position="0 0 0"
           animation-mixer
         ></a-entity>
@@ -87,24 +87,11 @@
     <script>
       document.getElementById('startButton').addEventListener('click', async () => {
         try {
-          // Kamera-Zugriff anfragen
-          const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-          const video = document.createElement('video');
-          video.srcObject = stream;
-          await video.play();
-
-          // Audio starten
           const audio = document.querySelector('#audio');
           await audio.play();
-
-          // MindAR starten
-          const scene = document.querySelector('a-scene');
-          await scene.components['mindar-image'].start();
-
-          // Startbutton ausblenden
           document.getElementById('startButton').style.display = 'none';
-        } catch (e) {
-          console.warn('Fehler beim Starten von Kamera oder Audio:', e);
+        } catch(e) {
+          console.warn('Audio konnte nicht abgespielt werden:', e);
         }
       });
     </script>
